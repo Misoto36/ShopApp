@@ -1,4 +1,5 @@
 from django.db import models
+from .forms import CartAddProductForm
 
 class Category(models.Model):
     name = models.CharField(max_length = 100)
@@ -59,6 +60,10 @@ class CartItem(models.Model):
     @property
     def total_price(self):
         return self.product.price * self.quantity
+    
+    def get_form(self):
+        initial = {'quantity':self.quantity}
+        return CartAddProductForm(initial=initial)
 
     
         

@@ -1,26 +1,61 @@
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404, redirect
+from django.views.generic import ListView, DetailView
+from django.views.generic.edit import CreateView
+from django import forms
 
 from .models import * 
 from .utils import get_cart
+from .forms import CartAddProductForm
 
-def index(request):
+class Index(ListView):
+    model = Product
+    template_name = 'shop/index.html'
+    context_object_name = 'products'
+
+""" def index(request):
     categories = Category.objects.all()
     products = Product.objects.all()
     context = {
         'categories': categories,
         'products' : products
     }
-    return render(request, 'shop/index.html', context)
+    return render(request, 'shop/index.html', context) """
 
-def product_detail(request, pk):
+class ProductDetail(DetailView):
+    model = Product
+    template_name = 'shop/product_detail.html'
+    context_object_name = 'product'
+
+    def get_context_data(self, **kwargs):
+        context= super().get_context_data(**kwargs)
+        context['form'] = CartAddProductForm()
+        return context
+    
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['name', 'description', 'price', 'category']
+
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        if Product.objects.filter(name = name).exists():
+            raise forms.ValidationError('Product with this name already exists.')
+        return name
+""" def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)
     context = {
         'product': product
     }
     return render(request,'shop/product_detail.html', context)
+ """
+class ProductCreate(CreateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'shop/product_create.html'
+    success_url = '/'
 
-def product_create(request):
+""" def product_create(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         description = request.POST.get('description')
@@ -37,7 +72,7 @@ def product_create(request):
     context = {
         'categories':Category.objects.all()}
     return render(request, 'shop/product_create.html', context)
-
+ """
 
 
 #Shopping Cart Views

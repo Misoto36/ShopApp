@@ -14,18 +14,7 @@
                 <br>
                 <form action="" method="post">
                     {% csrf_token %}
-                    <input class="form-control" type="text" name="name" placeholder="Nombre de producto" >
-                    <br>
-                    <textarea class="form-control" name="description"  rows="4" placeholder="Descripcion de producto"></textarea>
-                </br>
-                    <input class="form-control" type="number" name='price' placeholder="Precio del producto">
-                </br>    
-                <select class="form-select" name="category">
-                    {% for category in categories %}
-                    <option value="{{ category.id }}">{{ category.name }}</option>
-                    {% endfor %}
-                </select>
-                </br>
+                    {{form}}      
                     <input class="btn btn-primary" type="submit" value="Create">
                 </form>
             </div>
